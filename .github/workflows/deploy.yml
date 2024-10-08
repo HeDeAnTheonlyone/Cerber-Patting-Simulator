@@ -22,12 +22,12 @@ jobs:
 
       # Restore dependencies and build the Blazor WebAssembly project
       - name: Restore and Build
-        run: dotnet publish -c Release
+        run: dotnet publish CerberPat.csproj -c Release -o release --nologo
         
       # Deploy to the secondary branch
       - name: Deploy to secondary branch
         uses: peaceiris/actions-gh-pages@v4
         with:
           github_token: ${{ secrets.TOKEN }}
-          publish_dir: ./bin/Release/net8.0/publish/wwwroot
-          publish_branch: website
+          publish_dir: release/wwwroot
+          publish_branch: gh-pages
