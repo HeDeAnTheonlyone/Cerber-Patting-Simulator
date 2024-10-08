@@ -66,4 +66,5 @@ jobs:
         uses: JamesIves/github-pages-deploy-action@v4
         with:
           BRANCH: gh-pages
+          GITHUB_TOKEN: ${{ secrets.TOKEN }}
           FOLDER: release/wwwroot
