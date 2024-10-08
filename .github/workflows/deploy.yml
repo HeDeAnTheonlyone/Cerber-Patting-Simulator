@@ -1,0 +1,33 @@
+name: Deploy Blazor WebAssembly to Secondary Branch
+
+on:
+  push:
+    branches:
+      - main  # Replace 'main' with your primary branch name if different
+
+jobs:
+  deploy:
+    runs-on: ubuntu-latest
+
+    steps:
+      # Checkout the repository
+      - name: Checkout repository
+        uses: actions/checkout@v3
+
+      # Setup .NET Core SDK
+      - name: Setup .NET
+        uses: actions/setup-dotnet@v3
+        with:
+          dotnet-version: '8.x' # Adjust this to the version you're using
+
+      # Restore dependencies and build the Blazor WebAssembly project
+      - name: Restore and Build
+        run: dotnet publish -c Release -o release
+      
+      # Deploy to the secondary branch
+      - name: Deploy to secondary branch
+        uses: peaceiris/actions-gh-pages@v4
+        with:
+          github_token: ${{ secrets.GITHUB_TOKEN }}
+          publish_dir: ./release/wwwroot
+          publish_branch: website # Replace with your secondary branch name
