@@ -1,7 +1,7 @@
 {
   "mainAssemblyName": "CerberPat",
   "resources": {
-    "hash": "sha256-dqJP1aWF5cUuaKkRj3gGAx8EHV2JkMGpJHT+V63JPok=",
+    "hash": "sha256-EkNdzwryaVTlefxRWEgBAqrrZSgGBt6jXc7C3LLe9lw=",
     "jsModuleNative": {
       "dotnet.native.8.0.10.4xsnm8lwn6.js": "sha256-QVxMlY7ohmjgde/bZMA0dlWDAeuUP+tEfkiSdg4DFcE="
     },
@@ -208,10 +208,10 @@
       "mscorlib.wasm": "sha256-KvqZaNpjwhrOuzE4b4aMFsI+VUTyiWfoDI4zn4l9BM8=",
       "netstandard.wasm": "sha256-v+s7sWxtOM6bnOvC0jFrtnm6uMfbDymwl2nHNgbS2LM=",
       "System.Private.CoreLib.wasm": "sha256-pklll63uFQoY6vaD3vbluS9osYiJWLLLmob1yHFgepI=",
-      "CerberPat.wasm": "sha256-oW5d+Z75VWT6IWCDLiS6l/ukT1KKnp0fo42RPc11Ffw="
+      "CerberPat.wasm": "sha256-KoJom39d9QSHuzRfhwY0Y/1QxuF+oWx3zlCzerJgysg="
     },
     "pdb": {
-      "CerberPat.pdb": "sha256-5wtStxCIz55zykeFWF8ArmaaeAOg1al/Xc6qsVa8rAM="
+      "CerberPat.pdb": "sha256-xk6mv0OJaf9Ld3wWGR4QjgPhmzYK3bu1JAD7RyMPkzU="
     }
   },
   "cacheBootResources": true,
