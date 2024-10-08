@@ -22,12 +22,12 @@ jobs:
 
       # Restore dependencies and build the Blazor WebAssembly project
       - name: Restore and Build
-        run: dotnet publish -c Release -o release
-      
+        run: dotnet publish -c Release
+        
       # Deploy to the secondary branch
       - name: Deploy to secondary branch
         uses: peaceiris/actions-gh-pages@v4
         with:
           github_token: ${{ secrets.GITHUB_TOKEN }}
-          publish_dir: ./release/wwwroot
-          publish_branch: website # Replace with your secondary branch name
+          publish_dir: ./bin/Release/net8.0/wwwroot
+          publish_branch: website
