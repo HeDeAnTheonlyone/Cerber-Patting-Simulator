@@ -1,39 +1,3 @@
-# name: Deploy Blazor WebAssembly to Website branch
-
-# on:
-#   push:
-#     branches:
-#       - main 
-
-# jobs:
-#   deploy:
-#     runs-on: ubuntu-latest
-
-#     steps:
-#       # Checkout the repository
-#       - name: Checkout repository
-#         uses: actions/checkout@v3
-
-#       # Setup .NET Core SDK
-#       - name: Setup .NET
-#         uses: actions/setup-dotnet@v3
-#         with:
-#           dotnet-version: '8.x' # Adjust this to the version you're using
-
-#       # Restore dependencies and build the Blazor WebAssembly project
-#       - name: Restore and Build
-#         run: dotnet publish CerberPat.csproj -c Release -o release --nologo
-        
-#       # Deploy to the secondary branch
-#       - name: Deploy to secondary branch
-#         uses: peaceiris/actions-gh-pages@v4
-#         with:
-#           github_token: ${{ secrets.TOKEN }}
-#           publish_dir: release/wwwroot
-#           publish_branch: gh-pages
-
-
-
 name: build and test and deploy
 
 on:
