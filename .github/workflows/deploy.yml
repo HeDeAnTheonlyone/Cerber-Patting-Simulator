@@ -9,20 +9,16 @@ jobs:
   deploy-to-github-pages:
     runs-on: ubuntu-latest
     steps:
-      # Checkout the code
       - uses: actions/checkout@v4
 
-      # Install .NET Core SDK
       - name: Setup .NET Core
         uses: actions/setup-dotnet@v4
         with:
           dotnet-version: 8.0.x
-          
-      # Install dotnet wasm buildtools workload
+
       - name: Install .NET WASM Build Tools
         run: dotnet workload install wasm-tools
-          
-      # Publishes Blazor project to the release-folder
+
       - name: Publish .NET Core Project
         run: dotnet publish ./CerberPat.csproj -c:Release -p:GHPages=true -o release --nologo
 
