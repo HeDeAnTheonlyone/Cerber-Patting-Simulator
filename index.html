@@ -5,18 +5,42 @@
     <meta charset="utf-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
     <title>CerberPat</title>
-    <base href="CerberPat" />
+    <base href="/" />
     <link rel="stylesheet" href="css/bootstrap/bootstrap.min.css" />
-    <!-- <link rel="stylesheet" href="css/app.css" /> -->
+    <link rel="stylesheet" href="css/app.css" />
     <link rel="icon" type="image/png" href="favicon.png" />
     <link href="CerberPat.styles.css" rel="stylesheet" />
 </head>
 
+<style>
+    .info_div {
+        position: absolute;
+        top: 50%;
+        left: 50%;
+        transform: translate(-50%, -50%);
+    }
+
+    @font-face {
+        font-family: "Vividly-Extended";
+        src: url("assets/font/vividly_extended.ttf") format("truetype");
+    }
+
+    .index_p {
+        text-align: center;
+        font-size: 70px;
+    }
+</style>
+
 <body>
-    <div>
-        <p>Wan second please, the dawg will be here shortly.</p>
+    <div class="background">
+    <div id="app">
+        <div class="info_div">
+            <p class="index_p">WAN SECOND PLEASE</p>
+            <p class="index_p">THE DAWG WILL BE HERE SHORTLY</p>
+            <img style="display: block; margin-left: auto; margin-right: auto;" src="assets/media/cerby-walk.webp"/>
+        </div>
     </div>
-    <!-- <script src="_framework/blazor.webassembly.js"></script> -->
+    <script src="_framework/blazor.webassembly.js"></script>
 </body>
 
 </html>
