@@ -1,7 +1,7 @@
 {
   "mainAssemblyName": "CerberPat",
   "resources": {
-    "hash": "sha256-4QkNdieukmk55/jMk/t6togLg/eq/ZYeag1AGAwz3iI=",
+    "hash": "sha256-VZvI3Se2fGPNC4bqbr19O7nECOgIbR/woOYYHRWIWTw=",
     "jsModuleNative": {
       "dotnet.native.8.0.10.gk9bu57g9b.js": "sha256-/UERTTPsmGnLQHuAuCYJDJKEF4TUg7/WqucVugViiVU="
     },
@@ -17,7 +17,7 @@
       "icudt_no_CJK.dat": "sha256-L7sV7NEYP37/Qr2FPCePo5cJqRgTXRwGHuwF5Q+0Nfs="
     },
     "assembly": {
-      "CerberPat.wasm": "sha256-PtECdoXLBN9+fCgFKVsBOmSFgwAeA3SaBSZiv71k/eY=",
+      "CerberPat.wasm": "sha256-YbMKmzVqXoes9BR/WjauR/JJ+3+wMMJw954olYNfW2Y=",
       "Microsoft.AspNetCore.Components.wasm": "sha256-4ROtZoSpOl/7aGi3f+BkDd9aO/DC5eLmYxOQv6yNjb4=",
       "Microsoft.AspNetCore.Components.Web.wasm": "sha256-+gOTILdpS46o8zCcSZEf4VfeJO9uKM+COgMdhnEv0/8=",
       "Microsoft.AspNetCore.Components.WebAssembly.wasm": "sha256-Ws5szf6fWPAXna+XyWsAhavx+WDFcA/91DQ7iPRPCMs=",
