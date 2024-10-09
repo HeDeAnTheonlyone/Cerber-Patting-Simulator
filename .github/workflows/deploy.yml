@@ -22,6 +22,9 @@ jobs:
       - name: Publish .NET Core Project
         run: dotnet publish ./CerberPat.csproj -c:Release -p:GHPages=true -o release --nologo
 
+      - name: Update base href in index.html
+        run: sed -i 's|<base href="/" />|<base href="/CerberPat/" />|' output/wwwroot/index.html
+
       - name: Add .nojekyll file
         run: touch release/wwwroot/.nojekyll
 
