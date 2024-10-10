@@ -32,38 +32,33 @@
     private TimeSpan idleThreshold = TimeSpan.FromSeconds(0.2);
     private float moveThreashold = 2f;
 
+
+
     protected override void OnInitialized()
     {
         timer = new Timer(CheckIdleStatus, null, TimeSpan.FromSeconds(0), idleThreshold);
     }
 
+
     private void CheckIdleStatus(object? state)
     {
-        Console.WriteLine($"Move: {isMoving}");
-        Console.WriteLine($"Area: {isInPatArea}");
-        Console.WriteLine($"Idle: {isIdle}");
-        Console.WriteLine($"Time: {DateTime.Now.Subtract(lastMouseMove)}");
-        Console.WriteLine(isMoving && isInPatArea);
-        Console.WriteLine();
-
         if (DateTime.Now.Subtract(lastMouseMove) >= idleThreshold)
         {
             isIdle = true;
             isMoving = false;
-            Console.WriteLine("SADIOFUSAGDIZGSAZIUGDZIUSGHIZDAGSIDIZUSAHIUDSIUAH");
         }
 
         InvokeAsync(StateHasChanged);
     }
 
+
     private void OnMouseMove(MouseEventArgs e)
     {
-
-
         isMoving = true;
         isIdle = false;
         lastMouseMove = DateTime.Now;
     }
+
 
     private void OnMouseEnter() => isInPatArea = true;
     private void OnMouseLeave() => isInPatArea = false;
