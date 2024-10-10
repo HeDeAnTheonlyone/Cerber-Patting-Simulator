@@ -1,5 +1,5 @@
 ﻿@page "/"
-@implements IDisposable
+@implements IAsyncDisposable
 
 <PageTitle>Cerbert Patting Simulator</PageTitle>
 
@@ -8,28 +8,70 @@
 </head>
 
 <h1 style="margin-top: 5vh;">Pat Cerber</h1>
+@if (isMute) { <p>Click once to unmute</p> }
 
 <div class="mouse-tracker" @onmousemove="OnMouseMove"></div>
 
-<div @onmousemove="OnMouseMove" @onmouseenter="OnMouseEnter" @onmouseleave="OnMouseLeave">
-    @if (isMoving && isInPatArea)
+<div @onmousemove="OnMouseMove" @onmouseenter="OnMouseEnter" @onmouseleave="OnMouseLeave" @onclick="OnClick">
+    <audio @ref="audioRef">
+        <source src="assets/audio/mygosh.mp3" type="audio/mpeg">
+    </audio>
+
+    @if ((IsMoving && IsInPatArea) || !isPatable)
     {
-        <img class="cerber" src="assets/media/dawg-smile.png" />
-        <img class="patpat" src="assets/media/patpat.webp">
+        <img class="cerber" draggable="false" src="assets/image/dawg-smile.png" alt="Cerber Smile" />
+        <img class="patpat" draggable="false" src="assets/image/patpat.webp" alt="Patpat" />
     }
     else
     {
-        <img class=cerber src="assets/media/dawg.png" />
+        <img class=cerber draggable="false" src="assets/image/dawg.png" alt="Cerber" />
     }
 </div>
 
+
+
 @code {
+    [Inject] private IJSRuntime JSRuntime { get; set; }
+
     private bool isMoving = false;
+    private bool IsMoving
+    {
+        get => isMoving;
+        set
+        {
+            isMoving = value;
+            IsPating = IsMoving && IsInPatArea;
+        }
+    }
+
     private bool isInPatArea = false;
-    private bool isIdle = true;
+    private bool IsInPatArea
+    {
+        get => isInPatArea;
+        set
+        {
+            isInPatArea = value;
+            IsPating = IsInPatArea && IsMoving;
+        }
+    }
+
+    private bool isPating = false;
+    private bool IsPating
+    {
+        get => isPating;
+        set
+        {
+            isPating = value;
+            ManageAudio(value);
+        }
+    }
+
+    private bool isPatable = true;
+    private bool isMute = true;
     private Timer timer;
     private DateTime lastMouseMove;
     private TimeSpan idleThreshold = TimeSpan.FromSeconds(0.2);
+    private ElementReference audioRef;
 
 
 
@@ -39,13 +81,43 @@
     }
 
 
+    private async void ManageAudio(bool value)
+    {
+        if (value) await PlayAudio();
+        else await StopAudio();
+    }
+
+
+    [JSInvokable] public void UnBlockPatting()
+    {
+        Console.WriteLine("Audio Ended");
+        isPatable = true;
+        StateHasChanged();
+    }
+
+
+    private async Task PlayAudio()
+    {
+        if (!isPatable) return;
+
+        var dotNetObjRef = DotNetObjectReference.Create(this);
+        if (!isMute)
+        {
+            await JSRuntime.InvokeVoidAsync("audioPlayer.play", audioRef, dotNetObjRef);
+            isPatable = false;
+        }
+    }
+
+
+    private async Task StopAudio()
+    {
+        if (!isMute) await JSRuntime.InvokeVoidAsync("audioPlayer.setLoop", false);
+    }
+
+
     private void CheckIdleStatus(object? state)
     {
-        if (DateTime.Now.Subtract(lastMouseMove) >= idleThreshold)
-        {
-            isIdle = true;
-            isMoving = false;
-        }
+        if (DateTime.Now.Subtract(lastMouseMove) >= idleThreshold) IsMoving = false;
 
         InvokeAsync(StateHasChanged);
     }
@@ -53,18 +125,18 @@
 
     private void OnMouseMove(MouseEventArgs e)
     {
-        isMoving = true;
-        isIdle = false;
+        IsMoving = true;
         lastMouseMove = DateTime.Now;
     }
 
 
-    private void OnMouseEnter() => isInPatArea = true;
-    private void OnMouseLeave() => isInPatArea = false;
+    private void OnMouseEnter() => IsInPatArea = true;
+    private void OnMouseLeave() => IsInPatArea = false;
+    private void OnClick() => isMute = false;
 
 
-    public void Dispose()
+    async ValueTask IAsyncDisposable.DisposeAsync()
     {
-        timer?.Dispose();
+        if (timer != null) await timer.DisposeAsync();
     }
 }
