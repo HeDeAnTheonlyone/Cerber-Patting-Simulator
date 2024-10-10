@@ -4,16 +4,40 @@
     left: 0;
     width: 100%;
     height: 100%;
-    background-image: url("../assets/media/cerber_bg.jpeg");
+    background-image: url("../assets/media/cerber-bg.jpeg");
     background-repeat: repeat;
+    animation: moveBackground 45s linear infinite;
+}
+
+@keyframes moveBackground {
+    from {
+        background-position: 0 0;
+    }
+
+    to {
+        background-position: -685px 480px;
+    }
+}
+
+@font-face {
+    font-family: "Vividly-Extended";
+    src: url("../assets/font/vividly_extended.ttf") format("truetype");
 }
 
 h1 {
     font-family: "Vividly-Extended";
-    font-size: 80px;
+    text-align: center;
+    font-size: 100px;
 }
 
 p {
     font-family: "Vividly-Extended";
+    text-align: center;
     font-size: 42px;
+}
+
+.debug {
+    border-style: solid;
+    border-width: 5px;
+    border-color: red;
 }
