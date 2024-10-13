@@ -7,10 +7,16 @@
     <link rel="stylesheet" href="css/pat.css">
 </head>
 
-<h1 style="margin-top: 5vh;">Pat Cerber</h1>
-@if (isMute) { <p>Click once to unmute</p> }
+<div class="text-container debug">
+    <h1>Pat Cerber</h1>
+    @if (isMute)
+    {
+        <p>Click once to unmute</p>
+    }
+</div>
 
-<div @onmousemove="OnMouseMove" @onmouseenter="OnMouseEnter" @onmouseleave="OnMouseLeave" @onclick="OnClick">
+<div class="img-container" @onmousemove="OnMouseMove" @onmouseenter="OnMouseEnter" @onmouseleave="OnMouseLeave"
+    @onclick="OnClick">
     <audio @ref="audioRef">
         <source src="assets/audio/mygosh.mp3" type="audio/mpeg">
     </audio>
