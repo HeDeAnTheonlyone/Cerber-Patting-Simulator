@@ -10,21 +10,16 @@
 <h1 style="margin-top: 5vh;">Pat Cerber</h1>
 @if (isMute) { <p>Click once to unmute</p> }
 
-<div class="mouse-tracker" @onmousemove="OnMouseMove"></div>
-
 <div @onmousemove="OnMouseMove" @onmouseenter="OnMouseEnter" @onmouseleave="OnMouseLeave" @onclick="OnClick">
     <audio @ref="audioRef">
         <source src="assets/audio/mygosh.mp3" type="audio/mpeg">
     </audio>
 
+    <img class="cerber" draggable="false" src="@((IsMoving && IsInPatArea) || !isPatable ? "assets/image/dawg-smile.png" : "assets/image/dawg.png")" alt="Cerber" />
+
     @if ((IsMoving && IsInPatArea) || !isPatable)
     {
-        <img class="cerber" draggable="false" src="assets/image/dawg-smile.png" alt="Cerber Smile" />
         <img class="patpat" draggable="false" src="assets/image/patpat.webp" alt="Patpat" />
-    }
-    else
-    {
-        <img class=cerber draggable="false" src="assets/image/dawg.png" alt="Cerber" />
     }
 </div>
 
@@ -32,6 +27,7 @@
 
 @code {
     [Inject] private IJSRuntime JSRuntime { get; set; }
+    private DotNetObjectReference<Pat> DotNetObjRef { get; set; }
 
     private bool isMoving = false;
     private bool IsMoving
@@ -40,7 +36,7 @@
         set
         {
             isMoving = value;
-            IsPating = IsMoving && IsInPatArea;
+            IsPatting = IsMoving && IsInPatArea;
         }
     }
 
@@ -51,21 +47,22 @@
         set
         {
             isInPatArea = value;
-            IsPating = IsInPatArea && IsMoving;
+            IsPatting = IsInPatArea && IsMoving;
         }
     }
-
-    private bool isPating = false;
-    private bool IsPating
+    private bool isPatting = false;
+    private bool IsPatting
     {
-        get => isPating;
+        get => isPatting;
         set
         {
-            isPating = value;
+            if (isPatting == value) return;
+            isPatting = value;
             ManageAudio(value);
         }
     }
 
+    private int Counter { get; set; }
     private bool isPatable = true;
     private bool isMute = true;
     private Timer timer;
@@ -77,9 +74,10 @@
 
     protected override void OnInitialized()
     {
+        DotNetObjRef = DotNetObjectReference.Create(this);
+        JSRuntime.InvokeVoidAsync("setDotNetObjRef", DotNetObjRef);
         timer = new Timer(CheckIdleStatus, null, TimeSpan.FromSeconds(0), idleThreshold);
     }
-
 
     private async void ManageAudio(bool value)
     {
@@ -87,40 +85,36 @@
         else await StopAudio();
     }
 
-
-    [JSInvokable] public void UnBlockPatting()
+    [JSInvokable] public void UnblockPatting()
     {
         isPatable = true;
         StateHasChanged();
     }
 
-
     private async Task PlayAudio()
     {
         if (!isPatable) return;
 
-        var dotNetObjRef = DotNetObjectReference.Create(this);
         if (!isMute)
         {
-            await JSRuntime.InvokeVoidAsync("audioPlayer.play", audioRef, dotNetObjRef);
+            await JSRuntime.InvokeVoidAsync("audioPlayer.play", audioRef);
             isPatable = false;
         }
     }
-
 
     private async Task StopAudio()
     {
         if (!isMute) await JSRuntime.InvokeVoidAsync("audioPlayer.setLoop", false);
     }
 
-
     private void CheckIdleStatus(object? state)
     {
-        if (DateTime.Now.Subtract(lastMouseMove) >= idleThreshold) IsMoving = false;
-
-        InvokeAsync(StateHasChanged);
+        if (DateTime.Now.Subtract(lastMouseMove) >= idleThreshold && IsMoving)
+        {
+            IsMoving = false;
+            StateHasChanged();
+        }
     }
-
 
     private void OnMouseMove(MouseEventArgs e)
     {
@@ -128,14 +122,24 @@
         lastMouseMove = DateTime.Now;
     }
 
-
-    private void OnMouseEnter() => IsInPatArea = true;
-    private void OnMouseLeave() => IsInPatArea = false;
-    private void OnClick() => isMute = false;
-
-
-    async ValueTask IAsyncDisposable.DisposeAsync()
+    private void OnMouseEnter()
     {
+        IsInPatArea = true;
+    }    
+
+    private void OnMouseLeave()
+    {
+        IsInPatArea = false;
+    }    
+
+    private void OnClick()
+    {
+        isMute = false;
+    }
+
+    public async ValueTask DisposeAsync()
+    {
+        if (DotNetObjRef != null) DotNetObjRef.Dispose();
         if (timer != null) await timer.DisposeAsync();
     }
 }

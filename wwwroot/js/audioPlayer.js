@@ -3,7 +3,7 @@ window.audioPlayer = {
     isLooping: false,
 
 
-    play: function (audioElem, dotNetObjRef) {
+    play: function (audioElem) {
         if (this.isPlaying) return;
 
         if (!audioElem.hasTimeUpdateListener) {
@@ -28,7 +28,7 @@ window.audioPlayer = {
             audioElem.addEventListener('ended', () => {
                 this.isPlaying = false;
                 
-                dotNetObjRef.invokeMethodAsync('UnBlockPatting');
+                window.dotNetObjRef.invokeMethodAsync('UnblockPatting');
             })
         }
     },
