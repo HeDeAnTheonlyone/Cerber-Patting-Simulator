@@ -5,12 +5,14 @@
     "anonymousAuthentication": true,
     "iisExpress": {
       "applicationUrl": "http://localhost:56492",
-      "sslPort": 44314
+      "sslPort": 44314,
+      "hotReloadEnabled": true
     }
   },
   "profiles": {
     "http": {
       "commandName": "Project",
+      "hotReloadEnabled": true,
       "dotnetRunMessages": true,
       "launchBrowser": true,
       "inspectUri": "{wsProtocol}://{url.hostname}:{url.port}/_framework/debug/ws-proxy?browser={browserInspectUri}",
@@ -21,6 +23,7 @@
     },
     "https": {
       "commandName": "Project",
+      "hotReloadEnabled": true,
       "dotnetRunMessages": true,
       "launchBrowser": true,
       "inspectUri": "{wsProtocol}://{url.hostname}:{url.port}/_framework/debug/ws-proxy?browser={browserInspectUri}",
@@ -31,6 +34,7 @@
     },
     "IIS Express": {
       "commandName": "IISExpress",
+      "hotReloadEnabled": true,
       "launchBrowser": true,
       "inspectUri": "{wsProtocol}://{url.hostname}:{url.port}/_framework/debug/ws-proxy?browser={browserInspectUri}",
       "environmentVariables": {
