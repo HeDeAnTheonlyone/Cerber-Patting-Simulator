@@ -15,7 +15,6 @@ window.addBeforeUnloadListener = function (dotNetObjectRef) {
         dotNetObjectRef.invokeMethodAsync('OnBeforeUnload');
 
         event.preventDefault();
-        return '';
     });
 };
 
