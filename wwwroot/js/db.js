@@ -10,14 +10,6 @@ import {
 } from "https://www.gstatic.com/firebasejs/9.17.1/firebase-firestore.js";
 
 
-// window.addBeforeUnloadListener = function () {
-//     window.addEventListener('beforeunload', (event) => {
-//         let count = window.dotNetObjRef.invokeMethodAsync("GetPattingCounter");
-
-//         event.preventDefault();
-//     });
-// };
-
 window.db = {
     db: null,
 
@@ -25,6 +17,9 @@ window.db = {
         try {
             let app = initializeApp(JSON.parse(configString));
             this.db = getFirestore(app);
+
+            
+
             console.log("DB initalized");
         } catch (e) {
             console.log("confStr:", configString);
@@ -43,9 +38,17 @@ window.db = {
     getData: async function () {
         const querySnapshot = await getDocs(collection(this.db, "counting"));
         let dataArray = querySnapshot.docs.map((doc) => ({
-            id: doc.id,
-            userName: doc.get("name"),
+            count: doc.count,
         }));
         return dataArray;
     }
 }
+
+// window.addBeforeUnloadListener = function () {
+//     window.addEventListener('beforeunload', async (event) => {
+//         event.preventDefault();
+
+//         let count = window.dotNetObjRef.invokeMethodAsync("GetPattingCounter");
+//         await db.addData(count);
+//     });
+// };
