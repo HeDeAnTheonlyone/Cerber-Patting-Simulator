@@ -9,10 +9,18 @@ import {
     doc,
 } from "https://www.gstatic.com/firebasejs/9.17.1/firebase-firestore.js";
 
+
+window.addBeforeUnloadListener = function (dotNetObjectRef) {
+    window.addEventListener('beforeunload', (event) => {
+        dotNetObjectRef.invokeMethodAsync('OnBeforeUnload');
+
+        event.preventDefault();
+        return '';
+    });
+};
+
 window.db = {
     db: null,
-
-    
 
     init: function (configString) {
         try {
