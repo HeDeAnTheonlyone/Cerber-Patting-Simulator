@@ -1,7 +1,7 @@
 {
   "mainAssemblyName": "CerberPat",
   "resources": {
-    "hash": "sha256-HV/K+xAgBXdXoH0lfeAzR8vqihb0qg7aldvZB3rcwJM=",
+    "hash": "sha256-KpGG+n8yUO5lFg3CcB2WQPAA2QKu29gbkm7Gs7C8Wck=",
     "jsModuleNative": {
       "dotnet.native.8.0.10.frkgppanhn.js": "sha256-/UERTTPsmGnLQHuAuCYJDJKEF4TUg7/WqucVugViiVU="
     },
@@ -17,8 +17,8 @@
       "icudt_no_CJK.dat": "sha256-L7sV7NEYP37/Qr2FPCePo5cJqRgTXRwGHuwF5Q+0Nfs="
     },
     "assembly": {
-      "CerberPat.wasm": "sha256-awoc+9lgt+ajymr2kEv0sG00du6UrZCfsNiUWqPKjXo=",
-      "Microsoft.AspNetCore.Components.wasm": "sha256-HqULwYn2V5N/Bvy0AFQAwYG6COEIV2JFlnHtVr5I+pg=",
+      "CerberPat.wasm": "sha256-pdIh13Yt957RxxL0R9qLiWP9F+z9/g5J2NcvwvjQwTQ=",
+      "Microsoft.AspNetCore.Components.wasm": "sha256-2UWPN0Sh6QjtQKt9KFp+K6PXb2Cxay+OuDjxilejgmg=",
       "Microsoft.AspNetCore.Components.Web.wasm": "sha256-+gOTILdpS46o8zCcSZEf4VfeJO9uKM+COgMdhnEv0/8=",
       "Microsoft.AspNetCore.Components.WebAssembly.wasm": "sha256-Ws5szf6fWPAXna+XyWsAhavx+WDFcA/91DQ7iPRPCMs=",
       "Microsoft.Extensions.Configuration.Abstractions.wasm": "sha256-87sn2TYqgdZ95sXmavjKEzoEfMgHnYQ9LOvnMX+aZcI=",
