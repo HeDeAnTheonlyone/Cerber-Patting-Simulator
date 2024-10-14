@@ -10,13 +10,13 @@ import {
 } from "https://www.gstatic.com/firebasejs/9.17.1/firebase-firestore.js";
 
 
-window.addBeforeUnloadListener = function (dotNetObjectRef) {
-    window.addEventListener('beforeunload', (event) => {
-        dotNetObjectRef.invokeMethodAsync('OnBeforeUnload');
+// window.addBeforeUnloadListener = function (dotNetObjectRef) {
+//     window.addEventListener('beforeunload', (event) => {
+//         dotNetObjectRef.invokeMethodAsync('OnBeforeUnload');
 
-        event.preventDefault();
-    });
-};
+//         event.preventDefault();
+//     });
+// };
 
 window.db = {
     db: null,
@@ -28,6 +28,7 @@ window.db = {
             console.log("DB initalized");
         } catch (e) {
             console.log("Error initializing db: ", e);
+            console.log("confStr:", configString);
         }
     },
 
