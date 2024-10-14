@@ -94,7 +94,11 @@
         timer = new Timer(CheckIdleStatus, null, TimeSpan.FromSeconds(0), idleThreshold);
     }
 
-    [JSInvokable] public int GetPattingCount() => Counter;
+    [JSInvokable] public int GetPattingCount()
+    {
+        Counter = new Random().Next(0, 11);
+        return Counter;
+    }
 
     private async void ManageAudio(bool value)
     {
