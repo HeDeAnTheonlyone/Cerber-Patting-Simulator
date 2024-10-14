@@ -12,6 +12,8 @@ import {
 window.db = {
     db: null,
 
+    
+
     init: function (configString) {
         try {
             let app = initializeApp(JSON.parse(configString));
