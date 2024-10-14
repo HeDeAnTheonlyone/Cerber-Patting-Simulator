@@ -14,9 +14,9 @@ window.db = {
     db: null,
 
     init: function (configString) {
-        console.log("confStr:", String.raw(configString));
         try {
-            let app = initializeApp(JSON.parse(configString));
+            let confObj = JSON.parse(configString);
+            let app = initializeApp(confObj);
             this.db = getFirestore(app);
 
             console.log("DB initalized");
@@ -41,11 +41,10 @@ window.db = {
     }
 }
 
-window.addBeforeUnloadListener = function () {
-    window.addEventListener('beforeunload', async (event) => {
-        event.preventDefault();
-
-        let count = window.dotNetObjRef.invokeMethodAsync("GetPattingCounter");
-        await db.addData(count);
-    });
-};
+// window.addEventListener('beforeunload', async (event) => {
+//     const count = await window.dotNetObjRef.invokeMethodAsync("GetPattingCount");
+//     console.log(count);
+//     await db.addData({ count: count });
+//     console.log("finished adding data to db");
+//     event.preventDefault();
+// });
