@@ -16,6 +16,9 @@ jobs:
         with:
           dotnet-version: 8.0.x
 
+      - name: Rename dummy file
+        run: mv Services/Dummy_FirebaseConfig.razor Services/_FirebaseConfig.razor
+
       - name: Replace config placeholder
         env:
           CONFIG: ${{ secrets.CONFIG }}
