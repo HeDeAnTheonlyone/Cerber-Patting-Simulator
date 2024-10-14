@@ -19,10 +19,15 @@ jobs:
       - name: Rename dummy file
         run: mv Services/Dummy_FirebaseConfig.razor Services/_FirebaseConfig.razor
 
+      - name: Debug CONFIG value
+        env:
+          CONFIG: ${{ secrets.CONFIG }}
+        run: echo "$CONFIG"
+
       - name: Replace config placeholder
         env:
           CONFIG: ${{ secrets.CONFIG }}
-        run: sed -i "s|\*|\"$CONFIG\"|" Services/_FirebaseConfig.razor
+        run: sed -i "s|\\*|$CONFIG|" Services/_FirebaseConfig.razor
 
       - name: Install .NET WASM Build Tools
         run: dotnet workload install wasm-tools
