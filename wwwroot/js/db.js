@@ -22,7 +22,7 @@ window.db = {
 
             console.log("DB initalized");
         } catch (e) {
-            console.log("confStr:", configString);
+            console.log("confStr:", String.raw(configString));
             console.log("Error initializing db: ", e);
         }
     },
