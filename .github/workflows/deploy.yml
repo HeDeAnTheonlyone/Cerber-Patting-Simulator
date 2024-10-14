@@ -16,6 +16,11 @@ jobs:
         with:
           dotnet-version: 8.0.x
 
+      - name: Replace config placeholder
+        env:
+          CONFIG: ${{ secrets.CONFIG }}
+        run: sed -i 's|*|"$CONFIG"|' Services/_FirebaseConfig.razor
+
       - name: Install .NET WASM Build Tools
         run: dotnet workload install wasm-tools
 

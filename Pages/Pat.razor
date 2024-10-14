@@ -1,4 +1,5 @@
 ﻿@page "/"
+@using Services
 @implements IAsyncDisposable
 
 <PageTitle>Cerbert Patting Simulator</PageTitle>
@@ -14,7 +15,7 @@
         {
             <p style="font-size: 2vw;" >Click once to unmute</p>
         }
-        <p>Cerber has been pat @Counter times.</p>
+        @* <p>Cerber has been pat @Counter times.</p> *@
     </div>
 </div>
 
@@ -80,10 +81,16 @@
 
 
 
+// TODO
+// - Add onunload function to store click count in db
+// - Add a functon to get and sum up all counts in the db
+// - Add functionality to safely delete all stored scores while storin the sum as a new single entry.
+
     protected override void OnInitialized()
     {
         DotNetObjRef = DotNetObjectReference.Create(this);
         JSRuntime.InvokeVoidAsync("setDotNetObjRef", DotNetObjRef);
+        JSRuntime.InvokeVoidAsync("db.init", _FirebaseConfig.ConfigString);
         timer = new Timer(CheckIdleStatus, null, TimeSpan.FromSeconds(0), idleThreshold);
     }
 
@@ -143,6 +150,7 @@
     private void OnClick()
     {
         isMute = false;
+        JSRuntime.InvokeVoidAsync("db.addData", new { count = 69 });
     }
 
     public async ValueTask DisposeAsync()
