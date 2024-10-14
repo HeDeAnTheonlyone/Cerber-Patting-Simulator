@@ -15,19 +15,19 @@ window.db = {
 
     init: function (configString) {
         try {
-            let confObj = JSON.parse(configString);
-            let app = initializeApp(confObj);
+            const confObj = JSON.parse(configString);
+            const app = initializeApp(confObj);
             this.db = getFirestore(app);
-
-            console.log("DB initalized");
+        
+            this.getData();
         } catch (e) {
-            console.log("Error initializing db: ", e);
+            console.error("Error initializing db: ", e);
         }
     },
 
     addData: async function (data) {
         try {
-            const docRef = await addDoc(collection(this.db, "counting"), data);
+            await addDoc(collection(this.db, "counting"), { count: data });
         } catch (e) {
             console.error("Error adding document: ", e);
         }
@@ -36,15 +36,33 @@ window.db = {
     getData: async function () {
         const querySnapshot = await getDocs(collection(this.db, "counting"));
         let globCount = 0;
-        querySnapshot.docs.map((doc) => (globCount += doc.count));
-        return globCount;
+        let counters = 0;
+
+        querySnapshot.docs.map((doc) => {
+            globCount += doc.data().count;
+            counters ++;
+        });
+
+        if (counters >= 10) {
+            await this.deleteData();
+            await this.addData({ count: globCount });
+        }
+
+        await window.dotNetObjRef.invokeMethodAsync("SetPattingCount", `${globCount}`);
+    },
+
+    deleteData: async function () {
+        try {
+            await deleteDoc(collection(this.db, "counting"))
+        } catch (e) {
+            console.error("Error deleting document: ", e);
+        }
     }
 }
 
 // window.addEventListener('beforeunload', async (event) => {
-//     const count = await window.dotNetObjRef.invokeMethodAsync("GetPattingCount");
-//     console.log(count);
-//     await db.addData({ count: count });
-//     console.log("finished adding data to db");
+//     let count = await window.dotNetObjRef.invokeMethodAsync("GetPattingCount");
+//     await db.addData(count);
+//     console.log("finished adding data to db"); //DEBUG
 //     event.preventDefault();
 // });

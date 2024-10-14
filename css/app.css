@@ -28,13 +28,13 @@
 h1 {
     font-family: "Vividly-Extended";
     text-align: center;
-    font-size: 5vw;
+    font-size: min(7vw, 7vh);
 }
 
 p {
     font-family: "Vividly-Extended";
     text-align: center;
-    font-size: 3vw;
+    font-size: min(4vw, 4vh);;
 }
 
 .debug {
