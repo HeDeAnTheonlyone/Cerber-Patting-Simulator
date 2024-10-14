@@ -2,7 +2,6 @@ window.audioPlayer = {
     isPlaying: false,
     isLooping: false,
 
-
     play: function (audioElem) {
         if (this.isPlaying) return;
 
@@ -27,12 +26,9 @@ window.audioPlayer = {
 
             audioElem.addEventListener('ended', () => {
                 this.isPlaying = false;
-                
-                window.dotNetObjRef.invokeMethodAsync('UnblockPatting');
             })
         }
     },
-
 
     setLoop: function (value) {
         this.isLooping = value;

@@ -8,19 +8,20 @@
     <link rel="stylesheet" href="css/pat.css">
 </head>
 
-<div class="text-container" >
+<div class="text-container debug" >
     <h1>Pat Cerber!</h1>
         <div class="status-text">
+        <p>3 pat animations are 1 pat</p>
+        <p>Cerber has been pat <span style="color:darkmagenta">@sumCounter</span> times.</p>
         @if (isMute)
         {
-            <p style="font-size: 2vw;" >Click once to unmute</p>
+            <p style="font-size: min(2vw, 2vh);" >Click once to unmute</p>
         }
-        @* <p>Cerber has been pat @Counter times.</p> *@
     </div>
 </div>
 
 <div class="img-container" @onmousemove="OnMouseMove" @onmouseenter="OnMouseEnter" @onmouseleave="OnMouseLeave" @onclick="OnClick">
-    <audio @ref="audioRef">
+    <audio @ref="audioRef" @onended="OnAudioEnded" >
         <source src="assets/audio/mygosh.mp3" type="audio/mpeg">
     </audio>
 
@@ -28,7 +29,7 @@
 
     @if ((IsMoving && IsInPatArea) || !isPatable)
     {
-        <img class="patpat" draggable="false" src="assets/image/patpat.webp" alt="Patpat" />
+        <img class="patpat" draggable="false" src="assets/image/patpat.webp" alt="Patpat" @ontimeout="Abc" />
     }
 </div>
 
@@ -48,7 +49,6 @@
             IsPatting = IsMoving && IsInPatArea;
         }
     }
-
     private bool isInPatArea = false;
     private bool IsInPatArea
     {
@@ -70,20 +70,46 @@
             ManageAudio(value);
         }
     }
-
-    private int Counter { get; set; } = 0;
+    private int sumCounter = 0;
+    private int globCounter = 0;
+    private int localCounter = 0;
+    private int LocalCounter
+    {
+        get => localCounter;
+        set
+        {
+            localCounter = value;
+            sumCounter = localCounter + globCounter;
+        }
+    }
+    private int pattingTicks = 0;
+    private int PattingTicks
+    {
+        get => pattingTicks;
+        set
+        {
+            pattingTicks = value;
+            
+            if (pattingTicks >= 15)
+            {
+                LocalCounter++;
+                pattingTicks = 0;
+                if (!isPatting) StateHasChanged();
+            }
+        }
+    }
     private bool isPatable = true;
     private bool isMute = true;
     private Timer? timer;
     private DateTime lastMouseMove;
-    private TimeSpan idleThreshold = TimeSpan.FromSeconds(0.2);
+    private TimeSpan idleThreshold = TimeSpan.FromSeconds(0.1);
     private ElementReference audioRef;
 
 
 
 // TODO
-// - [ ] Add onunload function to store click count in db
-// - [ ] Add a functon to get and sum up all counts in the db
+// - [X] Add onunload function to store click count in db
+// - [X] Add a functon to get and sum up all counts in the db
 // - [ ] Add functionality to safely delete all stored scores while storin the sum as a new single entry.
 
     protected override void OnInitialized()
@@ -94,10 +120,17 @@
         timer = new Timer(CheckIdleStatus, null, TimeSpan.FromSeconds(0), idleThreshold);
     }
 
+    private void Abc() => Console.WriteLine("TESING");
+
     [JSInvokable] public int GetPattingCount()
     {
-        Counter = new Random().Next(0, 11);
-        return Counter;
+        return sumCounter;
+    }
+
+    [JSInvokable] public void SetPattingCount(string value)
+    {
+        globCounter = int.Parse(value);
+        LocalCounter = 0;
     }
 
     private async void ManageAudio(bool value)
@@ -106,7 +139,7 @@
         else await StopAudio();
     }
 
-    [JSInvokable] public void UnblockPatting()
+    private void OnAudioEnded()
     {
         isPatable = true;
         StateHasChanged();
@@ -135,6 +168,8 @@
             IsMoving = false;
             StateHasChanged();
         }
+
+        if ((IsMoving && IsInPatArea) || !isPatable) PattingTicks++;
     }
 
     private void OnMouseMove(MouseEventArgs e)
@@ -156,7 +191,7 @@
     private void OnClick()
     {
         isMute = false;
-        @* JSRuntime.InvokeVoidAsync("db.addData", new { count = 69 }); *@
+        ManageAudio(true);
     }
 
     public async ValueTask DisposeAsync()
