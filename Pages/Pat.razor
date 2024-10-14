@@ -7,16 +7,18 @@
     <link rel="stylesheet" href="css/pat.css">
 </head>
 
-<div class="text-container">
-    <h1>Pat Cerber</h1>
-    @if (isMute)
-    {
-        <p>Click once to unmute</p>
-    }
+<div class="text-container" >
+    <h1>Pat Cerber!</h1>
+        <div class="status-text">
+        @if (isMute)
+        {
+            <p style="font-size: 2vw;" >Click once to unmute</p>
+        }
+        @* <p>Cerber has been pat @Counter times.</p> *@
+    </div>
 </div>
 
-<div class="img-container" @onmousemove="OnMouseMove" @onmouseenter="OnMouseEnter" @onmouseleave="OnMouseLeave"
-    @onclick="OnClick">
+<div class="img-container" @onmousemove="OnMouseMove" @onmouseenter="OnMouseEnter" @onmouseleave="OnMouseLeave" @onclick="OnClick">
     <audio @ref="audioRef">
         <source src="assets/audio/mygosh.mp3" type="audio/mpeg">
     </audio>
@@ -68,7 +70,7 @@
         }
     }
 
-    private int Counter { get; set; }
+    private int Counter { get; set; } = 0;
     private bool isPatable = true;
     private bool isMute = true;
     private Timer timer;
