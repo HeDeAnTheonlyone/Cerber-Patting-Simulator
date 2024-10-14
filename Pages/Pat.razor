@@ -14,7 +14,7 @@
         {
             <p style="font-size: 2vw;" >Click once to unmute</p>
         }
-        @* <p>Cerber has been pat @Counter times.</p> *@
+        <p>Cerber has been pat @Counter times.</p>
     </div>
 </div>
 
@@ -34,8 +34,8 @@
 
 
 @code {
-    [Inject] private IJSRuntime JSRuntime { get; set; }
-    private DotNetObjectReference<Pat> DotNetObjRef { get; set; }
+    [Inject] public required IJSRuntime JSRuntime { get; set; }
+    private DotNetObjectReference<Pat>? DotNetObjRef { get; set; }
 
     private bool isMoving = false;
     private bool IsMoving
@@ -73,7 +73,7 @@
     private int Counter { get; set; } = 0;
     private bool isPatable = true;
     private bool isMute = true;
-    private Timer timer;
+    private Timer? timer;
     private DateTime lastMouseMove;
     private TimeSpan idleThreshold = TimeSpan.FromSeconds(0.2);
     private ElementReference audioRef;
