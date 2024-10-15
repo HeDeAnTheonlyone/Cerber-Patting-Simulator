@@ -2,67 +2,77 @@ import { initializeApp } from "https://www.gstatic.com/firebasejs/9.17.1/firebas
 
 import {
     getFirestore,
-    collection,
-    addDoc,
-    getDocs,
-    deleteDoc,
+    updateDoc,
+    getDoc,
     doc,
 } from "https://www.gstatic.com/firebasejs/9.17.1/firebase-firestore.js";
 
 
 window.db = {
     db: null,
+    dotNetObjRef: null,
 
-    init: function (configString) {
+    init: function (configString, dotNetObjRef) {
+        this.dotNetObjRef = dotNetObjRef;
+
+        window.addEventListener('beforeunload', (event) => {
+            this.dotNetObjRef.invokeMethodAsync("IsAllDataSaved")
+                .then((isSaved) => {
+                    if (isSaved === false) event.preventDefault();
+                });
+        });
+
         try {
             const confObj = JSON.parse(configString);
             const app = initializeApp(confObj);
             this.db = getFirestore(app);
         
-            this.getData();
+            this.loadData();
         } catch (e) {
             console.error("Error initializing db: ", e);
         }
     },
 
-    addData: async function (data) {
+    updateData: async function (count) {
+        const docRef = doc(this.db, "counting", "users");
+        const userId = getUserId();
+
         try {
-            await addDoc(collection(this.db, "counting"), { count: data });
+            await updateDoc(docRef, {
+                [userId]: count
+            });
         } catch (e) {
-            console.error("Error adding document: ", e);
+            console.error("Error adding field: ", e);
         }
     },
 
-    getData: async function () {
-        const querySnapshot = await getDocs(collection(this.db, "counting"));
-        let globCount = 0;
-        let counters = 0;
+    loadData: async function () {
+        const docSnapshot = await getDoc(doc(this.db, "counting", "users"));
+        const data = docSnapshot.data();
+        const userId = getUserId();
 
-        querySnapshot.docs.map((doc) => {
-            globCount += doc.data().count;
-            counters ++;
-        });
+        let globalCount = 0;
+        let localCount = 0;
 
-        if (counters >= 10) {
-            await this.deleteData();
-            await this.addData({ count: globCount });
+        for (const key in data) {
+            if (key === userId) {
+                localCount = data[key];
+            } else {
+                globalCount += data[key];
+            }
         }
 
-        await window.dotNetObjRef.invokeMethodAsync("SetPattingCount", `${globCount}`);
-    },
-
-    deleteData: async function () {
-        try {
-            await deleteDoc(collection(this.db, "counting"))
-        } catch (e) {
-            console.error("Error deleting document: ", e);
-        }
+        await this.dotNetObjRef.invokeMethodAsync("SetPattingCount", `${globalCount}`, `${localCount}`);
     }
 }
 
-// window.addEventListener('beforeunload', async (event) => {
-//     let count = await window.dotNetObjRef.invokeMethodAsync("GetPattingCount");
-//     await db.addData(count);
-//     console.log("finished adding data to db"); //DEBUG
-//     event.preventDefault();
-// });
+function getUserId() {
+    let userId = localStorage.getItem("userId");
+
+    if (userId === null) {
+        userId = `${Date.now()}-${crypto.randomUUID()}`
+        localStorage.setItem("userId", userId);
+    }
+
+    return userId;
+}
