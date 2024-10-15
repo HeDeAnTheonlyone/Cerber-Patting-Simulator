@@ -10,9 +10,18 @@
 
 <div class="text-container" >
     <h1>Pat Cerber!</h1>
-        <div class="status-text">
-        <p>3 pat animations are 1 pat</p>
+    <div class="status-text">
         <p>Cerber has been pat <span style="color:darkmagenta">@sumCounter</span> times.</p>
+        
+        @if (LocalCounter == LastSavedCount)
+        {
+            <p>Pat count is saved</p>
+        }
+        else
+        {
+            <p>Pat count saving...</p>
+        }
+
         @if (isMute)
         {
             <p style="font-size: min(4vw, 2vh);" >Click once to unmute</p>
@@ -20,7 +29,7 @@
     </div>
 </div>
 
-<div class="img-container" @onmousemove="OnMouseMove" @onmouseenter="OnMouseEnter" @onmouseleave="OnMouseLeave" @onclick="OnClick">
+<div class="img-container" @onmousemove="OnMouseMove" @ontouchmove="OnMouseMove" @onmouseenter="OnMouseEnter" @onmouseleave="OnMouseLeave" @onclick="OnClick" >
     <audio @ref="audioRef" @onended="OnAudioEnded" >
         <source src="assets/audio/mygosh.mp3" type="audio/mpeg">
     </audio>
@@ -29,7 +38,7 @@
 
     @if ((IsMoving && IsInPatArea) || !isPatable)
     {
-        <img class="patpat" draggable="false" src="assets/image/patpat.webp" alt="Patpat" @ontimeout="Abc" />
+        <img class="patpat" draggable="false" src="assets/image/patpat.webp" alt="Patpat" />
     }
 </div>
 
@@ -38,6 +47,7 @@
 @code {
     [Inject] public required IJSRuntime JSRuntime { get; set; }
     private DotNetObjectReference<Pat>? DotNetObjRef { get; set; }
+    private ElementReference audioRef;
 
     private bool isMoving = false;
     private bool IsMoving
@@ -67,11 +77,12 @@
         {
             if (isPatting == value) return;
             isPatting = value;
-            ManageAudio(value);
+            if (value) PlayAudio();
+            else StopAudio();
         }
     }
     private int sumCounter = 0;
-    private int globCounter = 0;
+    private int globalCounter = 0;
     private int localCounter = 0;
     private int LocalCounter
     {
@@ -79,7 +90,7 @@
         set
         {
             localCounter = value;
-            sumCounter = localCounter + globCounter;
+            sumCounter = localCounter + globalCounter;
         }
     }
     private int pattingTicks = 0;
@@ -89,8 +100,8 @@
         set
         {
             pattingTicks = value;
-            
-            if (pattingTicks >= 15)
+
+            if (pattingTicks >= 5)
             {
                 LocalCounter++;
                 pattingTicks = 0;
@@ -100,43 +111,49 @@
     }
     private bool isPatable = true;
     private bool isMute = true;
+    private int dataSaveTimeout = 0;
+    private int lastSavedCount = 0;
+    private int LastSavedCount
+    {
+        get => lastSavedCount;
+        set
+        {
+            lastSavedCount = value;
+            StateHasChanged();
+        }
+    }
     private Timer? timer;
     private DateTime lastMouseMove;
     private TimeSpan idleThreshold = TimeSpan.FromSeconds(0.1);
-    private ElementReference audioRef;
 
 
-
-// TODO
-// - [X] Add onunload function to store click count in db
-// - [X] Add a functon to get and sum up all counts in the db
-// - [ ] Add functionality to safely delete all stored scores while storin the sum as a new single entry.
 
     protected override void OnInitialized()
     {
+        dataSaveTimeout = 30;
         DotNetObjRef = DotNetObjectReference.Create(this);
-        JSRuntime.InvokeVoidAsync("setDotNetObjRef", DotNetObjRef);
-        JSRuntime.InvokeVoidAsync("db.init", _FirebaseConfig.ConfigString);
+        JSRuntime.InvokeVoidAsync("db.init", _FirebaseConfig.ConfigString, DotNetObjRef);
         timer = new Timer(CheckIdleStatus, null, TimeSpan.FromSeconds(0), idleThreshold);
     }
 
-    private void Abc() => Console.WriteLine("TESING");
-
-    [JSInvokable] public int GetPattingCount()
+    private async void SaveData()
     {
-        return sumCounter;
+        if (dataSaveTimeout > 0 || LastSavedCount == LocalCounter) return;
+        LastSavedCount = LocalCounter;
+        dataSaveTimeout = 50;
+        await JSRuntime.InvokeVoidAsync("db.updateData", LocalCounter);
     }
 
-    [JSInvokable] public void SetPattingCount(string value)
-    {
-        globCounter = int.Parse(value);
-        LocalCounter = 0;
-    }
+    [JSInvokable] public bool IsAllDataSaved() => LocalCounter == LastSavedCount;
 
-    private async void ManageAudio(bool value)
+    [JSInvokable] public int GetPattingCount() => LocalCounter;
+
+    [JSInvokable] public void SetPattingCount(string globalCount, string localCount)
     {
-        if (value) await PlayAudio();
-        else await StopAudio();
+        globalCounter = int.Parse(globalCount);
+        LocalCounter = int.Parse(localCount);
+        LastSavedCount = LocalCounter;
+        StateHasChanged();
     }
 
     private void OnAudioEnded()
@@ -145,7 +162,7 @@
         StateHasChanged();
     }
 
-    private async Task PlayAudio()
+    private async void PlayAudio()
     {
         if (!isPatable) return;
 
@@ -156,7 +173,7 @@
         }
     }
 
-    private async Task StopAudio()
+    private async void StopAudio()
     {
         if (!isMute) await JSRuntime.InvokeVoidAsync("audioPlayer.setLoop", false);
     }
@@ -169,29 +186,28 @@
             StateHasChanged();
         }
 
+        if (!IsPatting) SaveData();
+
         if ((IsMoving && IsInPatArea) || !isPatable) PattingTicks++;
+
+        if (dataSaveTimeout > 0) dataSaveTimeout--;
     }
 
-    private void OnMouseMove(MouseEventArgs e)
+    private void OnMouseMove()
     {
         IsMoving = true;
         lastMouseMove = DateTime.Now;
     }
 
-    private void OnMouseEnter()
-    {
-        IsInPatArea = true;
-    }    
+    private void OnMouseEnter() => IsInPatArea = true;
 
-    private void OnMouseLeave()
-    {
-        IsInPatArea = false;
-    }    
+    private void OnMouseLeave() => IsInPatArea = false;
 
     private void OnClick()
     {
+        if (!isMute) return;
         isMute = false;
-        ManageAudio(true);
+        PlayAudio();
     }
 
     public async ValueTask DisposeAsync()
