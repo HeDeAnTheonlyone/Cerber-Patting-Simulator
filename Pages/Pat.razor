@@ -12,7 +12,7 @@
     <h1>Pat Cerber!</h1>
     <div class="status-text">
         <p>Cerber has been pat <span style="color:darkmagenta">@sumCounter</span> times.</p>
-        
+
         @if (LocalCounter == LastSavedCount)
         {
             <p>Pat count is saved</p>
@@ -30,10 +30,6 @@
 </div>
 
 <div class="img-container" @onmousemove="OnMouseMove" @ontouchmove="OnMouseMove" @onmouseenter="OnMouseEnter" @onmouseleave="OnMouseLeave" @onclick="OnClick" >
-    <audio @ref="audioRef" @onended="OnAudioEnded" >
-        <source src="assets/audio/mygosh.mp3" type="audio/mpeg">
-    </audio>
-
     <img class="cerber" draggable="false" src="@((IsMoving && IsInPatArea) || !isPatable ? "assets/image/dawg-smile.png" : "assets/image/dawg.png")" alt="Cerber" />
 
     @if ((IsMoving && IsInPatArea) || !isPatable)
@@ -47,7 +43,6 @@
 @code {
     [Inject] public required IJSRuntime JSRuntime { get; set; }
     private DotNetObjectReference<Pat>? DotNetObjRef { get; set; }
-    private ElementReference audioRef;
 
     private bool isMoving = false;
     private bool IsMoving
@@ -132,7 +127,8 @@
     {
         dataSaveTimeout = 30;
         DotNetObjRef = DotNetObjectReference.Create(this);
-        JSRuntime.InvokeVoidAsync("db.init", _FirebaseConfig.ConfigString, DotNetObjRef);
+        JSRuntime.InvokeVoidAsync("window.setDotNetObjRef", DotNetObjRef);
+        JSRuntime.InvokeVoidAsync("db.init", _FirebaseConfig.ConfigString);
         timer = new Timer(CheckIdleStatus, null, TimeSpan.FromSeconds(0), idleThreshold);
     }
 
@@ -156,10 +152,16 @@
         StateHasChanged();
     }
 
-    private void OnAudioEnded()
+    [JSInvokable] public void OnAudioEnded()
     {
         isPatable = true;
         StateHasChanged();
+    }
+
+    private async void InitAudio()
+    {
+        await JSRuntime.InvokeVoidAsync("audioPlayer.init");
+        PlayAudio();
     }
 
     private async void PlayAudio()
@@ -168,7 +170,7 @@
 
         if (!isMute)
         {
-            await JSRuntime.InvokeVoidAsync("audioPlayer.play", audioRef);
+            await JSRuntime.InvokeVoidAsync("audioPlayer.play");
             isPatable = false;
         }
     }
@@ -207,7 +209,7 @@
     {
         if (!isMute) return;
         isMute = false;
-        PlayAudio();
+        InitAudio();
     }
 
     public async ValueTask DisposeAsync()

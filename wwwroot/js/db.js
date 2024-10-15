@@ -10,13 +10,11 @@ import {
 
 window.db = {
     db: null,
-    dotNetObjRef: null,
 
-    init: function (configString, dotNetObjRef) {
-        this.dotNetObjRef = dotNetObjRef;
+    init: function (configString) {
 
         window.addEventListener('beforeunload', (event) => {
-            this.dotNetObjRef.invokeMethodAsync("IsAllDataSaved")
+            window.dotNetObjRef.invokeMethodAsync("IsAllDataSaved")
                 .then((isSaved) => {
                     if (isSaved === false) event.preventDefault();
                 });
@@ -62,7 +60,7 @@ window.db = {
             }
         }
 
-        await this.dotNetObjRef.invokeMethodAsync("SetPattingCount", `${globalCount}`, `${localCount}`);
+        await window.dotNetObjRef.invokeMethodAsync("SetPattingCount", `${globalCount}`, `${localCount}`);
     }
 }
 
