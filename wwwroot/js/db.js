@@ -16,7 +16,7 @@ window.db = {
         window.addEventListener('beforeunload', (event) => {
             window.dotNetObjRef.invokeMethodAsync("IsAllDataSaved")
                 .then((isSaved) => {
-                    if (isSaved === false) event.preventDefault();
+                    if (!isSaved) event.preventDefault();
                 });
         });
 
