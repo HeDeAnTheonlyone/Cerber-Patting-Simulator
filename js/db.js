@@ -7,6 +7,8 @@ import {
     doc,
 } from "https://www.gstatic.com/firebasejs/9.17.1/firebase-firestore.js";
 
+// Please don't abuse this.
+// I don't feel like making a whole backend for this little fun website.
 
 window.db = {
     db: null,
